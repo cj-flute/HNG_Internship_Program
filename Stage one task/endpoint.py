@@ -33,7 +33,7 @@ def myAPI():
 
     # My API
     infoAPI = {
-        "slack_name": "CjFlute",
+        "slack_name": "Chijioke Michael Ezembadiwe (CjFlute)",
         "current_day": day,
         "utc_time": dtt,
         "track": "Backend",
