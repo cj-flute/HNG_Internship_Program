@@ -27,5 +27,6 @@ def myAPI():
     }
     return jsonify(infoAPI)
 
+
 if __name__ == "__main__":
-    endpoint.run(debug = True)
+    endpoint.run()
