@@ -3,7 +3,7 @@ import datetime, time
 
 endpoint = Flask(__name__)
 
-@endpoint.route('/api', methods=['GET'])
+@endpoint.route('/', methods=['GET'])
 def myAPI():
     q = request.args.to_dict()
 
