@@ -9,28 +9,18 @@ endpoint = Flask(__name__)
 @endpoint.route('/api', methods=['GET'])
 def myAPI():
     q = request.args.to_dict()
-
-    # date_time_year = datetime.datetime.now()
-    # date = date_time_year.isoformat()
-    # day = datetime.date(int(date_time_year.year),
-    #     int(date_time_year.month), int(date_time_year.day)).strftime("%A")
-
-        # For the date and time (auto-generated)
-    dt = datetime.date.today()
-    t = time.strftime("%H:%M:%S")
-    dtt = f"{dt}T{t}Z"
     date_time_year = datetime.datetime.now()
-    ttt = date_time_year.isoformat()
     day = datetime.date(int(date_time_year.year),
         int(date_time_year.month), int(date_time_year.day)).strftime("%A")
 
-
+    current_datetime = datetime.datetime.utcnow()
+    formatted_date = current_datetime.strftime("%Y-%m-%dT%H:%M:%SZ")
  
     # My API
     infoAPI = {
         "slack_name": q.get("slack_name"),
         "current_day": day,
-        "utc_time": dtt,
+        "utc_time": formatted_date,
         "track": q.get("track"),
         "github_file_url": 'https://github.com/cj-flute/repo/blob/main/endpoint.py',
         "github_repo_url": 'https://github.com/cj-flute/repo',
