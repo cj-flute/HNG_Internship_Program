@@ -3,9 +3,10 @@ import datetime, time
 
 endpoint = Flask(__name__)
 
-@endpoint.route('/endpoint/api', methods=['GET'])
+@endpoint.route('/api', methods=['GET'])
 def myAPI():
     q = request.args.to_dict()
+
 
     # For the date and time (auto-generated)
     dt = datetime.date.today()
@@ -29,4 +30,4 @@ def myAPI():
 
 
 if __name__ == "__main__":
-    endpoint.run()
+    endpoint.run(port=4000, debug=True)
