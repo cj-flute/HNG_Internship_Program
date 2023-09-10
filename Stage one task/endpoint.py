@@ -1,9 +1,12 @@
 from flask import Flask, request, jsonify
 import datetime, time
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 endpoint = Flask(__name__)
 
-@endpoint.route('/', methods=['GET'])
+@endpoint.route('/api', methods=['GET'])
 def myAPI():
     q = request.args.to_dict()
 
@@ -27,4 +30,4 @@ def myAPI():
 
 
 if __name__ == "__main__":
-    endpoint.run(port=4000, debug=True)
+    endpoint.run()
