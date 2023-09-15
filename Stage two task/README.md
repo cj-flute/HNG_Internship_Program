@@ -56,3 +56,5 @@ Objective: Build a simple REST API capable of CRUD operations on a resource, say
    If you encounter any issues or have questions regarding the submission process, please contact the Backend Mentors
    Backend Stage Two Submission
    https://forms.gle/KKUV3pf5GTd2xMXe6
+
+For more documentation on the task, check DOCUMENTATION.md
