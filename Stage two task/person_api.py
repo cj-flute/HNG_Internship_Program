@@ -26,12 +26,27 @@ persons = [
 ]
 
 
-# validation id
+# ID validation
 def id_validation(person_id):
     if isinstance(person_id, str):
-        return jsonify({'error': 'Invalid ID'})
-    return jsonify({'error': 'Person not found'})
+        return {'data': 'Invalid ID', 'isValid': False}
 
+    for person in persons:
+        if person['id'] == person_id:
+            return {'data': person, 'isValid': True}
+
+    return {'data': 'Person not found', 'isValid': False}
+
+# Gender validation
+
+
+def gender_validation(new_person):
+    if (new_person['gender'] == 'female' or
+            new_person['gender'] == 'male'):
+        return {'isValid': True}
+    else:
+        return {'data': 'Gender must be male or female',
+                'isValid': False}
 
 # getting all the persons
 
@@ -45,10 +60,8 @@ def person_record():
 @app.route('/api/<person_id>', methods=['GET'])
 @app.route('/api/<int:person_id>', methods=['GET'])
 def get_person(person_id):
-    for person in persons:
-        if person['id'] == person_id:
-            return person
-    return id_validation(person_id)
+    id_validation_response = id_validation(person_id)
+    return id_validation_response['data']
 
 # creating a person (create)
 
@@ -62,41 +75,58 @@ def create_person():
         'height': request.json['height'],
         'complexion': request.json['complexion']
     }
-    for new_p in new_person:
-        if (new_p['gender'] == 'male' or
-                new_p['gender'] == 'female'):
-            persons.append(new_person)
-            return new_person
-        else:
-            return {'error': 'Gender must be male or female'}
+    gender_validation_response = gender_validation(new_person)
 
-    # persons.append(new_person)
-    # return new_person
+    if gender_validation_response['isValid']:
+        persons.append(new_person)
+    else:
+        return gender_validation_response['data']
+    return new_person
 
 # updating a person (Update)
 
 
+@app.route('/api/<person_id>', methods=['PUT'])
 @app.route('/api/<int:person_id>', methods=['PUT'])
 def update_person(person_id):
-    for person in persons:
-        if person['id'] == person_id:
-            person['name'] = request.json['name']
-            person['gender'] = request.json['gender']
-            person['height'] = request.json['height']
-            person['complexion'] = request.json['complexion']
-            return person
-    return {'error': 'Person not found'}
+    person_update = {
+        'name': request.json['name'],
+        'gender': request.json['gender'],
+        'height': request.json['height'],
+        'complexion': request.json['complexion']
+    }
+
+    id_validation_response = id_validation(person_id)
+    gender_validation_response = gender_validation(person_update)
+
+    if id_validation_response['isValid']:
+        if gender_validation_response['isValid']:
+            for person in persons:
+                if person['id'] == person_id:
+                    person['name'] = person_update['name']
+                    person['gender'] = person_update['gender']
+                    person['height'] = person_update['height']
+                    person['complexion'] = person_update['complexion']
+                    return person
+            return id_validation_response['data']
+        else:
+            return gender_validation_response['data']
+    else:
+        return id_validation_response['data']
 
 # Delete a person (Delete)
 
 
+@app.route('/api/<person_id>', methods=['DELETE'])
 @app.route('/api/<int:person_id>', methods=['DELETE'])
 def delete_person(person_id):
-    for person in persons:
-        if person['id'] == person_id:
-            persons.remove(person)
-            return {'Person': 'Person Deleted'}
-    return {'error': 'Person not found'}
+    id_validation_response = id_validation(person_id)
+    if not id_validation_response['isValid']:
+        return id_validation_response['data']
+    else:
+        person = id_validation_response['data']
+        persons.remove(person)
+        return 'Person Deleted'
 
 
 if __name__ == '__main__':
