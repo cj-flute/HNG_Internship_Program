@@ -25,6 +25,14 @@ persons = [
         'height': '5.10', 'complexion': 'fair'},
 ]
 
+
+# validation id
+def id_validation(person_id):
+    if isinstance(person_id, str):
+        return jsonify({'error': 'Invalid ID'})
+    return jsonify({'error': 'Person not found'})
+
+
 # getting all the persons
 
 
@@ -34,12 +42,13 @@ def person_record():
 
 
 # get a person (Read)
+@app.route('/api/<person_id>', methods=['GET'])
 @app.route('/api/<int:person_id>', methods=['GET'])
 def get_person(person_id):
     for person in persons:
         if person['id'] == person_id:
             return person
-    return {'error': 'Person not found'}
+    return id_validation(person_id)
 
 # creating a person (create)
 
@@ -53,8 +62,16 @@ def create_person():
         'height': request.json['height'],
         'complexion': request.json['complexion']
     }
-    persons.append(new_person)
-    return new_person
+    for new_p in new_person:
+        if (new_p['gender'] == 'male' or
+                new_p['gender'] == 'female'):
+            persons.append(new_person)
+            return new_person
+        else:
+            return {'error': 'Gender must be male or female'}
+
+    # persons.append(new_person)
+    # return new_person
 
 # updating a person (Update)
 
