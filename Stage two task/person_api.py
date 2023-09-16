@@ -27,14 +27,22 @@ persons = [
 
 
 # ID validation
-def id_validation(person_id):
+def id_validation(person_id=0, name=''):
     if isinstance(person_id, str):
         return {'data': 'Invalid ID', 'isValid': False}
 
     for person in persons:
         if person['id'] == person_id:
             return {'data': person, 'isValid': True}
+    return {'data': 'Person not found', 'isValid': False}
 
+# name validation
+
+
+def name_validation(name):
+    for person in persons:
+        if person['name'] == name:
+            return {'data': person, 'isValid': True}
     return {'data': 'Person not found', 'isValid': False}
 
 # Gender validation
@@ -55,13 +63,26 @@ def gender_validation(new_person):
 def person_record():
     return jsonify(persons)
 
+# get person by name (Read)
+
+
+@app.route('/api/<name>', methods=['GET'])
+def get_person_by_name(name):
+    name_validation_response = name_validation(name)
+    if not name_validation_response['isValid']:
+        id_validation_response = id_validation(name)
+        return id_validation_response['data']
+    return name_validation_response['data']
 
 # get a person (Read)
+
+
 @app.route('/api/<person_id>', methods=['GET'])
 @app.route('/api/<int:person_id>', methods=['GET'])
 def get_person(person_id):
     id_validation_response = id_validation(person_id)
     return id_validation_response['data']
+
 
 # creating a person (create)
 
@@ -97,12 +118,15 @@ def update_person(person_id):
     }
 
     id_validation_response = id_validation(person_id)
+    name_validation_response = name_validation(person_id)
     gender_validation_response = gender_validation(person_update)
 
-    if id_validation_response['isValid']:
+    if (id_validation_response['isValid'] or
+            name_validation_response['isValid']):
         if gender_validation_response['isValid']:
             for person in persons:
-                if person['id'] == person_id:
+                if (person['id'] == person_id or
+                        person['name'] == person_id):
                     person['name'] = person_update['name']
                     person['gender'] = person_update['gender']
                     person['height'] = person_update['height']
