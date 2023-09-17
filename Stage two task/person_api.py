@@ -144,9 +144,16 @@ def update_person(person_id):
 @app.route('/api/<person_id>', methods=['DELETE'])
 @app.route('/api/<int:person_id>', methods=['DELETE'])
 def delete_person(person_id):
+    name_validation_response = name_validation(person_id)
     id_validation_response = id_validation(person_id)
     if not id_validation_response['isValid']:
-        return id_validation_response['data']
+        if name_validation_response['isValid']:
+            person = name_validation_response['data']
+            persons.remove(person)
+            print('pass')
+            return 'Person Deleted'
+        else:
+            return name_validation_response['data']
     else:
         person = id_validation_response['data']
         persons.remove(person)
